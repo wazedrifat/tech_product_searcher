@@ -162,9 +162,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _launchUrl(String url) async {
-    if (await canLaunchUrl(Uri.parse(url))) {
-      await launchUrl(Uri.parse(url));
-    } else {
+    if (!await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication)) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Could not launch $url')),
       );
