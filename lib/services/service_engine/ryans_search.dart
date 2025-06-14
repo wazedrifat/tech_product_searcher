@@ -21,18 +21,25 @@ class RyansSearch extends SearchEngine {
       var nameElement = product.querySelector('.card-body a');
       var priceElement = product.querySelector('.pr-text');
       var imgElement = product.querySelector('.image-box img');
-      var productIdElement = product.querySelector('.card-body .found-text');
+      var stockElement = product.querySelector('.container__ribbon4');
 
       String name = nameElement?.text.trim() ?? 'No name found';
       String price = priceElement?.text.trim() ?? 'No price found';
       String link = nameElement?.attributes['href'] ?? '';
       String imageLink = imgElement?.attributes['src'] ?? '';
-      String productId = productIdElement?.text.trim() ?? 'Unknown ID';
+      String stockStatus = stockElement?.text.trim() ?? 'In Stock';
 
       final numericString = price.replaceAll(RegExp(r'[^0-9]'), '');
       final priceValue = int.tryParse(numericString) ?? 0;
 
-      results.add(SearchResult(name, priceValue, productId, link, imageLink, shopName));
+      results.add(SearchResult(
+        name,
+        priceValue,
+        stockStatus,
+        link,
+        imageLink,
+        shopName
+      ));
     }
 
     return results;

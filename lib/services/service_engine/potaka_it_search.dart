@@ -22,13 +22,15 @@ class PotakaItSearch extends SearchEngine {
       var priceElement = product.querySelector('.price-info .price');
       var imgElement = product.querySelector('.product-img img');
       var buttonElement = product.querySelector('.cart-button-wrap button');
+      var linkElement = product.querySelector('.cart-button-wrap a'); // NEW: also check for <a>
 
       String name = nameElement?.text.trim() ?? 'No name found';
       String price = priceElement?.text.trim() ?? '0';
       String link = nameElement?.attributes['href'] ?? '';
       String imageLink = imgElement?.attributes['src'] ?? '';
-      String stockStatus = buttonElement?.text.trim() ?? 'Unknown';
 
+      // Detect stock status
+      String stockStatus = buttonElement?.text.trim() ?? linkElement?.text.trim() ?? 'Unknown';
       if (stockStatus.toLowerCase().contains('buy now') || stockStatus.toLowerCase().contains('add to cart')) {
         stockStatus = 'In Stock';
       }
