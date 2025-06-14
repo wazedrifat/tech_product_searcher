@@ -171,6 +171,11 @@ class _SearchScreenState extends State<SearchScreen> {
 
   @override
   Widget build(BuildContext context) {
+		Map<String, List<Product>> groupedProducts = {};
+		for (var product in _products) {
+			groupedProducts.putIfAbsent(product.name, () => []).add(product);
+		}
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Product Finder'),
@@ -324,87 +329,127 @@ class _SearchScreenState extends State<SearchScreen> {
                 ),
               ),
               const SizedBox(height: 16),
-              ..._products.map((product) {
-                return Card(
-                  elevation: 2,
-                  margin: const EdgeInsets.only(bottom: 16),
-                  child: Padding(
-                    padding: const EdgeInsets.all(12.0),
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(12),
-                          child: Image.network(
-                            product.imageUrl,
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                        const SizedBox(width: 16),
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                product.name,
-                                style: const TextStyle(
-                                  fontSize: 18,
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const SizedBox(height: 4),
-                              Chip(
-                                label: Text(product.shopName,
-                                  style: const TextStyle(fontSize: 12)),
-                                backgroundColor: Colors.blue[50],
-                              ),
-                              const SizedBox(height: 8),
-                              Text(
-																takaFormat.format(product.price),
-                                style: const TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Colors.blue,
-                                ),
-                              ),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Icon(
-                                    Icons.inventory,
-                                    color: product.stockStatus == "In Stock" ? Colors.green : Colors.red,
-                                    size: 18,
-                                  ),
-                                  const SizedBox(width: 4),
-                                  Text(
-                                    product.stockStatus,
-                                    style: TextStyle(
-                                      color: product.stockStatus == "In Stock" ? Colors.green : Colors.red,
-                                      fontWeight: FontWeight.bold,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              InkWell(
-                                onTap: () => _launchUrl(product.link),
-                                child: Text(
-                                  product.link,
-                                  style: const TextStyle(
-                                    color: Colors.blue,
-                                    decoration: TextDecoration.underline,
-                                  ),
-                                  overflow: TextOverflow.ellipsis,
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      ],
+              ...groupedProducts.entries.map((entry) {
+                String productName = entry.key;
+                List<Product> productVariants = entry.value;
+
+                final prices = productVariants.map((e) => e.price).where((p) => p > 0).toList();
+                final minPrice = prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0;
+                final maxPrice = prices.isNotEmpty ? prices.reduce((a, b) => a > b ? a : b) : 0;
+                final stockCount = productVariants.where((p) => p.stockStatus.toLowerCase() == 'in stock').length;
+                final groupImage = productVariants.firstWhere((p) => p.imageUrl.isNotEmpty, orElse: () => productVariants.first).imageUrl;
+								String priceDisplay = (minPrice == maxPrice)
+                    ? '৳${minPrice.toStringAsFixed(0)}'
+                    : '৳${minPrice.toStringAsFixed(0)} - ৳${maxPrice.toStringAsFixed(0)}';
+
+                return ExpansionTile(
+                  tilePadding: const EdgeInsets.symmetric(horizontal: 8),
+                  leading: ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: Image.network(
+                      groupImage,
+                      width: 50,
+                      height: 50,
+                      fit: BoxFit.cover,
                     ),
                   ),
+                  title: Text(
+                    productName,
+                    style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Row(
+                    children: [
+                      Text(
+                        priceDisplay,
+                        style: const TextStyle(fontSize: 12, color: Colors.teal),
+                      ),
+                      const SizedBox(width: 12),
+                      Text(
+                        '$stockCount/${productVariants.length} in stock',
+                        style: const TextStyle(fontSize: 12, color: Colors.lightGreen),
+                      ),
+                    ],
+                  ),
+                  children: productVariants.map((product) {
+                    return Card(
+                      elevation: 2,
+                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                ClipRRect(
+                                  borderRadius: BorderRadius.circular(12),
+                                  child: Image.network(
+                                    product.imageUrl,
+                                    width: 100,
+                                    height: 100,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                                const SizedBox(width: 16),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text(
+                                            product.shopName,
+                                            style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold),
+                                          ),
+                                          Text(
+                                            takaFormat.format(product.price),
+                                            style: const TextStyle(
+                                              fontSize: 16,
+                                              fontWeight: FontWeight.bold,
+                                              color: Colors.blue,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Row(
+                                        children: [
+                                          Icon(
+                                            Icons.inventory,
+                                            color: product.stockStatus == "In Stock" ? Colors.green : Colors.red,
+                                            size: 18,
+                                          ),
+                                          const SizedBox(width: 4),
+                                          Text(
+                                            product.stockStatus,
+                                            style: TextStyle(
+                                              color: product.stockStatus == "In Stock" ? Colors.green : Colors.red,
+                                              fontWeight: FontWeight.bold,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 8),
+                                      ElevatedButton(
+                                        onPressed: () => _launchUrl(product.link),
+                                        child: const Text('Go to Store'),
+                                        style: ElevatedButton.styleFrom(
+                                          foregroundColor: Colors.white,
+                                          backgroundColor: Colors.deepPurple,
+                                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
                 );
               }).toList(),
             ],
