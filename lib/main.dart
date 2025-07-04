@@ -13,7 +13,7 @@ class ProductSearchApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Product Finder',
+      title: 'Tech Hunt',
       theme: ThemeData(
         primarySwatch: Colors.blue,
         fontFamily: 'Roboto',
