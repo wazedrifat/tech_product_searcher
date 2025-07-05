@@ -1,4 +1,5 @@
 import 'package:html/parser.dart' as parser;
+import 'package:tech_product_searcher/constants/constant.dart';
 import 'package:tech_product_searcher/models/search_result.dart';
 import 'package:tech_product_searcher/services/service_engine/search_engine.dart';
 
@@ -30,7 +31,7 @@ class SkyLandSearch extends SearchEngine {
       String stockStatus = buttonElement?.text.trim() ?? 'Unknown';
 
       if (stockStatus.toLowerCase().contains('add to cart')) {
-        stockStatus = 'In Stock';
+        stockStatus = Constants.InStock;
       }
       final numericString = price.replaceAll(RegExp(r'[^0-9]'), '');
       final priceValue = int.tryParse(numericString) ?? 0;

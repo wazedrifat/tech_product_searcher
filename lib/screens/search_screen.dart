@@ -1,9 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:tech_product_searcher/constants/constant.dart';
 import 'package:tech_product_searcher/models/product.dart';
 import 'package:tech_product_searcher/models/search_request.dart';
 import 'package:tech_product_searcher/models/search_result.dart';
 import 'package:tech_product_searcher/models/settings.dart';
+import 'package:tech_product_searcher/services/service_engine/monarch_it_search.dart';
 import 'package:tech_product_searcher/services/service_engine/potaka_it_search.dart';
 import 'package:tech_product_searcher/services/service_engine/ryans_search.dart';
 import 'package:tech_product_searcher/services/service_engine/search_engine.dart';
@@ -36,6 +38,7 @@ class _SearchScreenState extends State<SearchScreen> {
     TechLandSearch(),
     UccSearch(),
     RyansSearch(),
+    MonarchItSearch()
   ];
   SettingsModel settings = SettingsModel();
   List<Product> _products = [];
@@ -77,7 +80,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _applySettings() {
     _products = _allProducts.where((product) {
-      if (settings.showInStockOnly && product.stockStatus.toLowerCase() != 'in stock') {
+      if (settings.showInStockOnly && product.stockStatus.toLowerCase() != Constants.InStock.toLowerCase()) {
         return false;
       }
       if (product.price < settings.minPrice || product.price > settings.maxPrice) {
@@ -127,8 +130,8 @@ class _SearchScreenState extends State<SearchScreen> {
         }
 
         allProducts.sort((a, b) {
-					bool aInStock = a.stockStatus.toLowerCase() == 'in stock';
-					bool bInStock = b.stockStatus.toLowerCase() == 'in stock';
+					bool aInStock = a.stockStatus.toLowerCase() == Constants.InStock.toLowerCase();
+					bool bInStock = b.stockStatus.toLowerCase() == Constants.InStock.toLowerCase();
 
 					if (aInStock != bInStock) {
 						return aInStock ? -1 : 1; 
@@ -336,7 +339,7 @@ class _SearchScreenState extends State<SearchScreen> {
                 final prices = productVariants.map((e) => e.price).where((p) => p > 0).toList();
                 final minPrice = prices.isNotEmpty ? prices.reduce((a, b) => a < b ? a : b) : 0;
                 final maxPrice = prices.isNotEmpty ? prices.reduce((a, b) => a > b ? a : b) : 0;
-                final stockCount = productVariants.where((p) => p.stockStatus.toLowerCase() == 'in stock').length;
+                final stockCount = productVariants.where((p) => p.stockStatus.toLowerCase() == Constants.InStock.toLowerCase()).length;
                 final groupImage = productVariants.firstWhere((p) => p.imageUrl.isNotEmpty, orElse: () => productVariants.first).imageUrl;
 								String priceDisplay = (minPrice == maxPrice)
                     ? '৳${minPrice.toStringAsFixed(0)}'
@@ -365,7 +368,7 @@ class _SearchScreenState extends State<SearchScreen> {
                       ),
                       const SizedBox(width: 12),
                       Text(
-                        '$stockCount/${productVariants.length} in stock',
+                        '$stockCount/${productVariants.length} ${Constants.InStock.toLowerCase()}',
                         style: const TextStyle(fontSize: 12, color: Colors.lightGreen),
                       ),
                     ],
@@ -417,14 +420,14 @@ class _SearchScreenState extends State<SearchScreen> {
                                         children: [
                                           Icon(
                                             Icons.inventory,
-                                            color: product.stockStatus == "In Stock" ? Colors.green : Colors.red,
+                                            color: product.stockStatus == Constants.InStock ? Colors.green : Colors.red,
                                             size: 18,
                                           ),
                                           const SizedBox(width: 4),
                                           Text(
                                             product.stockStatus,
                                             style: TextStyle(
-                                              color: product.stockStatus == "In Stock" ? Colors.green : Colors.red,
+                                              color: product.stockStatus == Constants.InStock ? Colors.green : Colors.red,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),

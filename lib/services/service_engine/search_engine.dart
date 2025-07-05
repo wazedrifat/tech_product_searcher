@@ -10,17 +10,17 @@ abstract class SearchEngine {
   Future<List<SearchResult>> fetchData(SearchRequest search) async {
     List<SearchResult> allResults = [];
     for (int page = 1; page <= maxPages; page++) {
-      String html = await _searchObject(search.include, page);
+      String html = await searchObject(search.include, page);
       List<SearchResult> pageResults = processResults(html);
       if (pageResults.isEmpty) {
         break;
       }
       allResults.addAll(pageResults);
     }
-    return _filterOutNoise(allResults, search);
+    return filterOutNoise(allResults, search);
   }
 
-  List<SearchResult> _filterOutNoise(List<SearchResult> results, SearchRequest search) {
+  List<SearchResult> filterOutNoise(List<SearchResult> results, SearchRequest search) {
     List<String> includeWords = search.include.split(' ').where((w) => w.isNotEmpty).toList();
     String includePattern = includeWords.map((word) => RegExp.escape(word)).join(r'.*');
     RegExp includeRegex = RegExp(includePattern, caseSensitive: false);
@@ -53,7 +53,7 @@ abstract class SearchEngine {
     return res;
   }
 
-  Future<String> _searchObject(String search, int page) async {
+  Future<String> searchObject(String search, int page) async {
     String url = getSearchUrl(Uri.encodeComponent(search), page);
     final response = await http.get(Uri.parse(url));
     return response.body;

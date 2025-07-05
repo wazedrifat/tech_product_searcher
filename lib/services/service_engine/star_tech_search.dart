@@ -1,4 +1,5 @@
 import 'package:html/parser.dart' as parser;
+import 'package:tech_product_searcher/constants/constant.dart';
 import 'package:tech_product_searcher/models/search_result.dart';
 import 'package:tech_product_searcher/services/service_engine/search_engine.dart';
 
@@ -27,7 +28,7 @@ class StarTechSearch extends SearchEngine {
       String price = priceElement?.text.trim() ?? 'No price found';
       String link = nameElement?.attributes['href'] ?? '';
       String imageLink = imgElement?.attributes['src'] ?? '';
-      String stockStatus = stockElement?.text.trim() ?? 'In Stock';
+      String stockStatus = stockElement?.text.trim() ?? Constants.InStock;
       
       final numericString = price.replaceAll(RegExp(r'[^0-9]'), '');
       final priceValue = int.tryParse(numericString) ?? 0;
