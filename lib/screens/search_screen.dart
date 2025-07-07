@@ -11,7 +11,7 @@ import 'package:tech_product_searcher/services/service_engine/ryans_search.dart'
 import 'package:tech_product_searcher/services/service_engine/search_engine.dart';
 import 'package:tech_product_searcher/services/service_engine/sky_land_search.dart';
 import 'package:tech_product_searcher/services/service_engine/star_tech_search.dart';
-import 'package:tech_product_searcher/services/service_engine/tech_land_search.dart';
+import 'package:tech_product_searcher/services/service_engine/tech_land_search_v2.dart';
 import 'package:tech_product_searcher/services/service_engine/ucc_search.dart';
 import 'package:tech_product_searcher/widgets/settings_modal.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -35,7 +35,7 @@ class _SearchScreenState extends State<SearchScreen> {
     StarTechSearch(),
     PotakaItSearch(),
     SkyLandSearch(),
-    TechLandSearch(),
+    TechLandSearchV2(),
     UccSearch(),
     RyansSearch(),
     MonarchItSearch()
