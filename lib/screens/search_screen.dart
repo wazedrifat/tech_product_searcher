@@ -342,8 +342,8 @@ class _SearchScreenState extends State<SearchScreen> {
                 final stockCount = productVariants.where((p) => p.stockStatus.toLowerCase() == Constants.InStock.toLowerCase()).length;
                 final groupImage = productVariants.firstWhere((p) => p.imageUrl.isNotEmpty, orElse: () => productVariants.first).imageUrl;
 								String priceDisplay = (minPrice == maxPrice)
-                    ? '৳${minPrice.toStringAsFixed(0)}'
-                    : '৳${minPrice.toStringAsFixed(0)} - ৳${maxPrice.toStringAsFixed(0)}';
+                    ? takaFormat.format(minPrice)
+                    : '${takaFormat.format(minPrice)} - ${takaFormat.format(maxPrice)}';
 
                 return ExpansionTile(
                   tilePadding: const EdgeInsets.symmetric(horizontal: 8),
