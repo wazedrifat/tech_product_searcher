@@ -96,6 +96,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   Future<void> _submitForm() async {
+    FocusScope.of(context).unfocus();
     if (_formKey.currentState!.validate()) {
       setState(() {
         _isLoading = true;
@@ -231,6 +232,7 @@ class _SearchScreenState extends State<SearchScreen> {
                           prefixIcon: Icon(Icons.search),
                           border: OutlineInputBorder(),
                         ),
+                        onFieldSubmitted: (_) => _submitForm(),
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Please enter a search term';
